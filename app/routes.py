@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
-from app.schemas.user import UserSchema, UserResponse
+from app.schemas.user import UserSchema, UserCreate, UserResponse
 from app.crud import crud
 from typing import List, Union
 
@@ -9,7 +9,7 @@ router = APIRouter()
 
 
 @router.post("/create")
-async def create_user(request: UserSchema, db: Session = Depends(get_db)):
+async def create_user(request: UserCreate, db: Session = Depends(get_db)):
     """
     Create a new user in the database.
     """
@@ -19,7 +19,9 @@ async def create_user(request: UserSchema, db: Session = Depends(get_db)):
         message="User created successfully",
         code="201",
         result=UserSchema(
+            id=user.id,
             username=user.username
+
         )
     ).model_dump(exclude_none=True)
 
