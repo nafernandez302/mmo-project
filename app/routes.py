@@ -7,6 +7,7 @@ from typing import List, Union
 
 router = APIRouter()
 
+
 @router.post("/create")
 async def create_user(request: UserSchema, db: Session = Depends(get_db)):
     """
@@ -15,10 +16,12 @@ async def create_user(request: UserSchema, db: Session = Depends(get_db)):
     user = crud.create_user(db, user=request)
     return UserResponse(
         status="Ok",
-        code="200",
         message="User created successfully",
-        result=user
-    ).dict(exclude_none=True)
+        code="201",
+        result=UserSchema(
+            username=user.username
+        )
+    ).model_dump(exclude_none=True)
 
 
 @router.get("/", response_model=List[UserSchema])
