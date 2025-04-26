@@ -39,7 +39,17 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     """
     Retrieve a user by their ID.
     """
-    user = crud.get_user_by_id(db, user_id=user_id).first()
+    user = crud.get_user_by_id(db, user_id=user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+@router.delete("/{user_id}", response_model=Union[UserSchema, dict])
+async def delete_user(user_id:int, db: Session = Depends(get_db)):
+    """
+    Deletes a user by their ID.
+    """
+    user = crud.delete_user(db, user_id=user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
