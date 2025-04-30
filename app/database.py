@@ -1,23 +1,12 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from app.models.base import DBManager
 
-DATABASE_URL = "sqlite:///./mmo.db" 
-
-# Engine
-engine = create_engine(
-    DATABASE_URL,
-    connect_args={"check_same_thread": False} 
-)
-
-# Session
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-class Base(DeclarativeBase):
-    pass
+_server = None
 
 def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    """
+    Returns database connection.
+    """
+    global _server
+    if _server is None:
+        _server = DBManager()
+    return _server.db
